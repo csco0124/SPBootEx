@@ -51,7 +51,7 @@ public class OAuthAttributes {
                 .picture((String) response.get("profile_image"))
                 .attributes(response)
                 .nameAttributeKey(userNameAttributeName)
-                .build();
+                .build(); 
     }
     
     public User toEntity() {
