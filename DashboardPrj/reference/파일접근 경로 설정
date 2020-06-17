@@ -1,0 +1,2 @@
+CMD 관리자 권한으로 실행 후 아래 명령어 실행 (명령어 실행시 본인 환경에 맞는 경로로 변경 > workspace와 tmp4 등)
+mklink /d C:\workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp5\wtpwebapps\DashboardPrj\resources\upload d:\Sp5VueEx_file
