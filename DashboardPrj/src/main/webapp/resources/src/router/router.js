@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Analytics from '../DemoPages/Dashboards/Analytics.vue'
+import Editor from '../DemoPages/Examples/Editor.vue'
 import LoginBoxed from '../DemoPages/UserPages/LoginBoxed.vue'
 import RegisterBoxed from '../DemoPages/UserPages/RegisterBoxed.vue'
 import ForgotPasswordBoxed from '../DemoPages/UserPages/ForgotPasswordBoxed.vue'
@@ -37,6 +38,13 @@ const router = new VueRouter({
 			path: '/',
 			name: 'analytics',
 			component: Analytics,
+		},
+
+		// Examples
+		{
+			path: '/examples/editor',
+			name: 'editor',
+			component: Editor,
 		},
 
 		// Pages

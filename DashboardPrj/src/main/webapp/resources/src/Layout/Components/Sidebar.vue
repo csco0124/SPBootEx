@@ -49,6 +49,16 @@
                         ]
                     },
                     {
+                        title: 'Examples',
+                        icon: 'pe-7s-magic-wand',
+                        child: [
+                            {
+                                href: '/examples/editor',
+                                title: 'Editor',
+                            },
+                        ]
+                    },
+                    {
                         title: 'Pages',
                         icon: 'pe-7s-browser',
                         child: [
