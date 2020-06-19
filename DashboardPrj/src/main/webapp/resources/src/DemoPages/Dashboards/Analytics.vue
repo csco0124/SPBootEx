@@ -843,9 +843,12 @@
             subheading: 'This is an example dashboard created using build-in elements and components.',
             icon: 'pe-7s-plane icon-gradient bg-tempting-azure',
         }),
+        mounted() {
+            
+        },
+        methods: {
 
-        methods: {},
-
+        }
     }
 
 
