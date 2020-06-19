@@ -7,6 +7,7 @@
 	
 	<util:properties id="jdbc" 		location="/WEB-INF/config/jdbc_${spring.profiles.active:local}.properties"/>
 	<util:properties id="prop" 		location="classpath:properties/common_${spring.profiles.active:local}.properties" />
+	<util:properties id="api" 		location="classpath:properties/api.properties" />
 	
 	<!-- 다국어 설정 -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
