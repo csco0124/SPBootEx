@@ -38,4 +38,19 @@
 		</property>
 		<property name="fileEncoding" value="UTF-8"/>
 	</bean>
+	
+	<!-- Google 소셜 로그인 연결 설정 -->
+	<bean id="googleConnectionFactory" class="org.springframework.social.google.connect.GoogleConnectionFactory">
+		<constructor-arg value="629167496908-7e91pd8k2m4sfd854e3r7k52ul1td4va.apps.googleusercontent.com" />
+		<constructor-arg value="K1Pw-Qmj2an58o6gO6cYx36E" />
+	</bean>
+    <bean id="googleOAuth2Template" class="org.springframework.social.google.connect.GoogleOAuth2Template">
+        <constructor-arg value="629167496908-7e91pd8k2m4sfd854e3r7k52ul1td4va.apps.googleusercontent.com" />
+        <constructor-arg value="K1Pw-Qmj2an58o6gO6cYx36E" />
+    </bean>
+    <bean id="googleOAuth2Parameters" class="org.springframework.social.oauth2.OAuth2Parameters">
+        <property name="scope" value="email profile"></property>
+        <property name="redirectUri" value="http://localhost/googleCallback" />
+    </bean>
+    
 </beans>

@@ -48,6 +48,11 @@
                                 <div class="float-right">
                                     <b-button variant="primary" size="lg">Login to Dashboard</b-button>
                                 </div>
+                                <div class="float-right">
+                                    <b-button class="mr-2 mb-2" variant="alternate" v-on:click="googleLogin()">
+                                    Google Login
+                                    </b-button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -59,3 +64,22 @@
         </div>
     </div>
 </template>
+<script>
+    import axios from 'axios'
+    export default {
+        components: {
+
+        },
+        data: () => ({
+            googleLoginUrl : ""
+        }),
+        mounted() {
+
+        },
+        methods: {
+            googleLogin(){
+                var googleLoginPop = window.open("/googleLogin", "googleLoginPop", "width=500,height=600");
+            }
+        }
+    }
+</script>

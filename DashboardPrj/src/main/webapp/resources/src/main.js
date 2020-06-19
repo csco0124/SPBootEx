@@ -18,6 +18,7 @@ Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);
 Vue.use(VueCookies);
+
 /*
 예제
 $cookies.set('vue_test', 'vue_test_value', '30s');  //30초동안 쿠키 저장
@@ -27,8 +28,6 @@ Vue.component('default-layout', Default);
 Vue.component('userpages-layout', Pages);
 
 router.beforeEach( async(to, from, next) => {
-
-  alert(to + ":" + from + ":" + next);
   next();
   //next({ name: 'login-boxed' });
 })
