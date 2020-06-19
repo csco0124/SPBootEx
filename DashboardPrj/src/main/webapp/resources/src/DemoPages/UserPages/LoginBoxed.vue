@@ -49,9 +49,7 @@
                                     <b-button variant="primary" size="lg">Login to Dashboard</b-button>
                                 </div>
                                 <div class="float-right">
-                                    <b-button class="mr-2 mb-2" variant="alternate" v-on:click="googleLogin()">
-                                    Google Login
-                                    </b-button>
+                                    <img src="/img/google_login.png" v-on:click="googleLogin()" style="cursor:pointer; width:145px;">
                                 </div>
                             </div>
                         </div>
