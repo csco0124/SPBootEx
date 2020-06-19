@@ -5,7 +5,7 @@
       get EditorData
     </b-button>
     <b-card title="CKEditor Example" class="main-card mb-4">
-      <textarea name="editor" id="editor" rows="10" cols="80">
+      <textarea id="editor" rows="10" cols="80">
           This is my textarea to be replaced with CKEditor 4.
       </textarea>
     </b-card>
