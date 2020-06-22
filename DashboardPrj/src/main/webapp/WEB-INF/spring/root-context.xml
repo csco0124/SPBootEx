@@ -9,28 +9,6 @@
 	<util:properties id="prop" 		location="classpath:properties/common_${spring.profiles.active:local}.properties" />
 	<util:properties id="api" 		location="classpath:properties/api.properties" />
 	
-	<!-- 다국어 설정 -->
-    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-    	<property name="defaultEncoding" value="UTF-8"/>
-    	<property name="cacheSeconds" value="180" />	<!-- 180초마다 업데이트 된 properties 파일을 새로 로드함 -->
-        <property name="basenames">
-            <list>
-                <value>classpath:properties/i18n/message</value>
-            </list>
-        </property>
-    </bean>
-    
-    <!-- 다국어 설정 -->
-    <!-- <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
-		<property name="defaultLocale" value="ko" />
-	</bean> -->
-	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
-		<property name="cookieName" value="spclientlanguage"/>
-    	<property name="cookieMaxAge" value="-1"/>	<!-- -1 : 브라우저를 닫으면 쿠키 삭제 -->
-		<property name="defaultLocale" value="ko" />
-	</bean>
-    <!-- // 다국어 설정 -->
-    
 	<bean id="properties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<property name="locations">
 			<list>
@@ -42,16 +20,16 @@
 	
 	<!-- Google 소셜 로그인 연결 설정 -->
 	<bean id="googleConnectionFactory" class="org.springframework.social.google.connect.GoogleConnectionFactory">
-		<constructor-arg value="629167496908-7e91pd8k2m4sfd854e3r7k52ul1td4va.apps.googleusercontent.com" />
-		<constructor-arg value="K1Pw-Qmj2an58o6gO6cYx36E" />
+		<constructor-arg value="#{api['api.google.client_id']}" />
+		<constructor-arg value="#{api['api.google.client_secret']}" />
 	</bean>
     <bean id="googleOAuth2Template" class="org.springframework.social.google.connect.GoogleOAuth2Template">
-        <constructor-arg value="629167496908-7e91pd8k2m4sfd854e3r7k52ul1td4va.apps.googleusercontent.com" />
-        <constructor-arg value="K1Pw-Qmj2an58o6gO6cYx36E" />
+        <constructor-arg value="#{api['api.google.client_id']}" />
+        <constructor-arg value="#{api['api.google.client_secret']}" />
     </bean>
     <bean id="googleOAuth2Parameters" class="org.springframework.social.oauth2.OAuth2Parameters">
         <property name="scope" value="email profile"></property>
-        <property name="redirectUri" value="http://localhost/googleCallback" />
+        <property name="redirectUri" value="#{api['api.google.callback_url']}" />
     </bean>
     
 </beans>

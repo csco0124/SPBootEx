@@ -56,6 +56,10 @@
                                 href: '/examples/editor',
                                 title: 'Editor',
                             },
+                            {
+                                href: '/examples/treeview',
+                                title: 'Treeview',
+                            },
                         ]
                     },
                     {

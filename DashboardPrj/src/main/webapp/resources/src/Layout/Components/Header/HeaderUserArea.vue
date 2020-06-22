@@ -15,12 +15,17 @@
                             <h6 tabindex="-1" class="dropdown-header">Header</h6>
                             <button type="button" tabindex="0" class="dropdown-item">Actions</button>
                             <div tabindex="-1" class="dropdown-divider"></div>
-                            <button type="button" tabindex="0" class="dropdown-item">Dividers</button>
+                            <button type="button" tabindex="0" class="dropdown-item">Logout</button>
                         </b-dropdown>
                     </div>
                     <div class="widget-content-left  ml-3 header-user-info">
                         <div class="widget-heading">Alina Mclourd</div>
                         <div class="widget-subheading">VP People Manager</div>
+                    </div>
+                    <div class="widget-content-right header-user-info ml-3">
+                        <b-btn v-b-tooltip.hover title="Login" class="btn-shadow p-1" size="sm" variant="info">
+                            <font-awesome-icon icon="sign-in-alt" class="mr-1 ml-1"/>
+                        </b-btn>
                     </div>
                     <div class="widget-content-right header-user-info ml-3">
                         <b-btn v-b-tooltip.hover title="Tooltip Example" class="btn-shadow p-1" size="sm" variant="info">
@@ -48,6 +53,7 @@
         faFilePdf,
         faFileArchive,
         faEllipsisH,
+        faSignInAlt,
     } from '@fortawesome/free-solid-svg-icons'
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
@@ -62,6 +68,7 @@
         faFilePdf,
         faFileArchive,
         faEllipsisH,
+        faSignInAlt,
     );
 
     export default {

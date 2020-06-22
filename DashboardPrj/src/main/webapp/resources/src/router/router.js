@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Analytics from '../DemoPages/Dashboards/Analytics.vue'
 import Editor from '../DemoPages/Examples/Editor.vue'
+import Treeview from '../DemoPages/Examples/Treeview.vue'
 import LoginBoxed from '../DemoPages/UserPages/LoginBoxed.vue'
 import RegisterBoxed from '../DemoPages/UserPages/RegisterBoxed.vue'
 import ForgotPasswordBoxed from '../DemoPages/UserPages/ForgotPasswordBoxed.vue'
@@ -45,6 +46,11 @@ const router = new VueRouter({
 			path: '/examples/editor',
 			name: 'editor',
 			component: Editor,
+		},
+		{
+			path: '/examples/treeview',
+			name: 'treeview',
+			component: Treeview,
 		},
 
 		// Pages

@@ -10,6 +10,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -55,6 +56,13 @@ public class GoogleController {
 	@Autowired
 	OAuth2Parameters googleOAuth2Parameters;
 	
+	@Value("#{api['api.google.client_id']}")
+	private String clientId;
+	@Value("#{api['api.google.client_secret']}")
+	private String clientSecret;
+	@Value("#{api['api.google.token.url']}")
+	private String tokenUrl;
+	
 	@RequestMapping(value = "/googleLogin")
 	public String googleLogin(Model model) {
 
@@ -74,21 +82,20 @@ public class GoogleController {
 		String failMsg = "";
 		try {
 			String code = request.getParameter("code");
-	        System.out.println(code);
-	        
-	        //RestTemplate을 사용하여 Access Token 및 profile을 요청한다.
+			
+	        //RestTemplate을 사용하여 Access Token 및 profile을 요청
 	        RestTemplate restTemplate = new RestTemplate();
 	        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
 	        parameters.add("code", code);
-	        parameters.add("client_id", "629167496908-7e91pd8k2m4sfd854e3r7k52ul1td4va.apps.googleusercontent.com");
-	        parameters.add("client_secret", "K1Pw-Qmj2an58o6gO6cYx36E");
+	        parameters.add("client_id", clientId);
+	        parameters.add("client_secret", clientSecret);
 	        parameters.add("redirect_uri", googleOAuth2Parameters.getRedirectUri());
 	        parameters.add("grant_type", "authorization_code");
 	 
 	        HttpHeaders headers = new HttpHeaders();
 	        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 	        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<MultiValueMap<String, String>>(parameters, headers);
-	        ResponseEntity<Map> responseEntity = restTemplate.exchange("https://www.googleapis.com/oauth2/v4/token", HttpMethod.POST, requestEntity, Map.class);
+	        ResponseEntity<Map> responseEntity = restTemplate.exchange(tokenUrl, HttpMethod.POST, requestEntity, Map.class);
 	        Map<String, Object> responseMap = responseEntity.getBody();
 	 
 	        // id_token 라는 키에 사용자가 정보가 존재한다.
