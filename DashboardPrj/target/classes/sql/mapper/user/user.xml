@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.dashboard.user.dao.UserDao">
+	
+	<update id="insertAndUpdateUser" parameterType="map">
+		INSERT INTO DASHBOARD_USER(USER_EMAIL, USER_NAME, USER_IMG_URL, USER_LOCALE)
+			VALUES (#{user_email, jdbcType=VARCHAR}, #{user_name, jdbcType=VARCHAR}, #{user_img_url, jdbcType=VARCHAR}, #{user_locale, jdbcType=VARCHAR})
+		ON DUPLICATE KEY
+			UPDATE 	 USER_NAME = #{user_name, jdbcType=VARCHAR}
+		      		,USER_IMG_URL = #{user_img_url, jdbcType=VARCHAR}
+		      		,USER_LOCALE = #{user_locale, jdbcType=VARCHAR}
+		      		,UDT_DT = NOW()
+	</update>
+	
+</mapper>

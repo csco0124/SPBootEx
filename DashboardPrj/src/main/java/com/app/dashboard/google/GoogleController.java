@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
+import com.app.dashboard.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -55,6 +57,9 @@ public class GoogleController {
 	
 	@Autowired
 	OAuth2Parameters googleOAuth2Parameters;
+	
+	@Autowired
+	private UserService userService;
 	
 	@Value("#{api['api.google.client_id']}")
 	private String clientId;
@@ -104,20 +109,21 @@ public class GoogleController {
 	        //Base 64로 인코딩 되어 있으므로 디코딩한다.
 	 
 	        String[] tokens = ((String)responseMap.get("id_token")).split("\\.");
-	        Base64 base64 = new Base64(true);
 	        
 	        //JSON String 형식을 을 자바 Map 형식으로 변환
 	        ObjectMapper mapper = new ObjectMapper();
 	        Map<String, String> result = mapper.readValue(new String(Base64.decodeBase64(tokens[1]), "utf-8"), Map.class);
 	        
-	        /*
-	      	DB 저장 및 세션 저장
-	        param.append("?email_domain=" + result.get("hd"));
-	        param.append("&picture=" + result.get("picture"));
-	        param.append("&name=" + result.get("name"));
-	        param.append("&locale=" + result.get("locale"));
-	        param.append("&email=" + result.get("email"));
-	        */
+	        Map<String, Object> userMap = new HashMap<String, Object>();
+	        userMap.put("user_name", result.get("name"));
+	        userMap.put("user_img_url", result.get("picture"));
+	        userMap.put("user_email", result.get("email"));
+	        userMap.put("user_locale", result.get("locale"));
+	        userService.insertAndUpdateUser(userMap);
+	        
+	        HttpSession httpSession = request.getSession(true);
+	        httpSession.setMaxInactiveInterval(Integer.parseInt(properties.getProperty("common.sessionTimeout")));	//30초
+	        httpSession.setAttribute("DASHBOARD_USER_SESSION", userMap);
 	        
 	        success = "Y";
 	        
