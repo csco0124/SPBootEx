@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import store from './store/store'
 import I18n from './i18n/i18n'
 import axios from 'axios'
 
@@ -17,7 +16,6 @@ const default_layout = "default";
 
 export default {
   name: 'app',
-  store: store,
   i18n: I18n,
   data () {
     return {
@@ -33,7 +31,8 @@ export default {
     }
   },
   created: function () {
-
+      this.$store.dispatch('getServerEnvData');
+      this.$store.dispatch('getUserSessionData');
   },
   components: {
 

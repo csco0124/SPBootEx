@@ -109,7 +109,6 @@ public class GoogleController {
 	        //Base 64로 인코딩 되어 있으므로 디코딩한다.
 	 
 	        String[] tokens = ((String)responseMap.get("id_token")).split("\\.");
-	        
 	        //JSON String 형식을 을 자바 Map 형식으로 변환
 	        ObjectMapper mapper = new ObjectMapper();
 	        Map<String, String> result = mapper.readValue(new String(Base64.decodeBase64(tokens[1]), "utf-8"), Map.class);

@@ -161,13 +161,18 @@
 		</dependency>
 				
 		
-		<!-- Social OAuth2 Login -->
+		<!-- Google OAuth2 -->
 		<dependency>
 		    <groupId>org.springframework.social</groupId>
 		    <artifactId>spring-social-google</artifactId>
 		    <version>1.0.0.RELEASE</version>
 		</dependency>
-		
+		<dependency>
+		    <groupId>com.google.api-client</groupId>
+		    <artifactId>google-api-client</artifactId>
+		    <version>1.30.9</version>
+		</dependency>
+				
 	</dependencies>
     <build>
         <plugins>

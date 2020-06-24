@@ -28,7 +28,7 @@
         <constructor-arg value="#{api['api.google.client_secret']}" />
     </bean>
     <bean id="googleOAuth2Parameters" class="org.springframework.social.oauth2.OAuth2Parameters">
-        <property name="scope" value="email profile"></property>
+        <property name="scope" value="#{api['api.google.scope']}"></property>
         <property name="redirectUri" value="#{api['api.google.callback_url']}" />
     </bean>
     

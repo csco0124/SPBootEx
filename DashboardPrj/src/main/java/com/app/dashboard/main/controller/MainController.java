@@ -47,7 +47,7 @@ public class MainController {
 		return "main";
 	}
 	
-	@RequestMapping(value = "/getServerEnv.json")
+	@RequestMapping(value = "/getServerEnv")
 	public @ResponseBody String getServerEnv() {
 		String serverEnv = "";
 		try {

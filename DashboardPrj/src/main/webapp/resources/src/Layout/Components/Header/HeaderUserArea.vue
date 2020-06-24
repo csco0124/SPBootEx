@@ -3,11 +3,11 @@
         <div class="header-btn-lg pr-0">
             <div class="widget-content p-0">
                 <div class="widget-content-wrapper">
-                    <div class="widget-content-left">
+                    <div v-if="$store.state.userEmail != undefined" class="widget-content-left">
                         <b-dropdown toggle-class="p-0 mr-2" menu-class="dropdown-menu-lg" variant="link" right>
                             <span slot="button-content">
                                 <div class="icon-wrapper icon-wrapper-alt rounded-circle">
-                                    <img width="42" class="rounded-circle" src="/dashboard/src/assets/images/avatars/1.jpg" alt="">
+                                    <img width="42" class="rounded-circle" v-bind:src="$store.state.userImgUrl">
                                 </div>
                             </span>
                             <button type="button" tabindex="0" class="dropdown-item">Menus</button>
@@ -15,17 +15,19 @@
                             <h6 tabindex="-1" class="dropdown-header">Header</h6>
                             <button type="button" tabindex="0" class="dropdown-item">Actions</button>
                             <div tabindex="-1" class="dropdown-divider"></div>
-                            <button type="button" tabindex="0" class="dropdown-item">Logout</button>
+                            <button type="button" v-on:click="userSessionInvalidate()" tabindex="0" class="dropdown-item">Logout</button>
                         </b-dropdown>
                     </div>
-                    <div class="widget-content-left  ml-3 header-user-info">
-                        <div class="widget-heading">Alina Mclourd</div>
-                        <div class="widget-subheading">VP People Manager</div>
+                    <div v-if="$store.state.userEmail != undefined" class="widget-content-left  ml-3 header-user-info">
+                        <div class="widget-heading">{{$store.state.userName}}</div>
+                        <div class="widget-subheading">{{$store.state.userEmail}}</div>
                     </div>
-                    <div class="widget-content-right header-user-info ml-3">
-                        <b-btn v-b-tooltip.hover title="Login" class="btn-shadow p-1" size="sm" variant="info">
+                    <div v-else class="widget-content-right header-user-info ml-3">
+                        <router-link to='/pages/login-boxed'>
+                            <b-btn v-b-tooltip.hover title="Login" class="btn-shadow p-1" size="sm" variant="info">
                             <font-awesome-icon icon="sign-in-alt" class="mr-1 ml-1"/>
-                        </b-btn>
+                            </b-btn>
+                        </router-link>
                     </div>
                     <div class="widget-content-right header-user-info ml-3">
                         <b-btn v-b-tooltip.hover title="Tooltip Example" class="btn-shadow p-1" size="sm" variant="info">
@@ -79,8 +81,11 @@
         data: () => ({
 
         }),
-
-        methods: {}
+        methods: {
+            userSessionInvalidate(){
+                this.$store.dispatch('userSessionInvalidate');
+            }
+        }
     }
 
 
