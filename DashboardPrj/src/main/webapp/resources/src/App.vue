@@ -2,7 +2,7 @@
   <div id="app">
     <component :is="layout">
         <transition name="fade" mode="out-in">
-            <router-view></router-view>
+            <router-view v-on:make-toast="makeToast"></router-view>
         </transition>
     </component>
   </div>
@@ -23,7 +23,13 @@ export default {
     }
   },
   methods: {
-    
+  	makeToast(variant = null) {
+	    this.$bvToast.toast('Toast body content', {
+	      title: "Variant ${variant || 'default'}",
+	      variant: variant,
+	      solid: true
+	    })
+	}
   },
   computed: {
     layout() {
@@ -31,6 +37,7 @@ export default {
     }
   },
   created: function () {
+    console.log('1111');
       this.$store.dispatch('getServerEnvData');
       this.$store.dispatch('getUserSessionData');
   },

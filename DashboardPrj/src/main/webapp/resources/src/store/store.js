@@ -15,6 +15,9 @@ const store = new Vuex.Store({
   getters: {
     getServer : function(state){
       return state.serverName;
+    },
+    getUserEmail : function(state){
+      return state.userEmail;
     }
   },
   mutations: {

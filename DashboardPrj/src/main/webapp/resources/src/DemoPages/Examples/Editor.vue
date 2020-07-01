@@ -14,13 +14,13 @@
 
 <script>
   import PageTitle from "../../Layout/Components/PageTitle.vue";
-  
+
   export default {
     components: {
       PageTitle,
     },
     data: () => ({
-      heading: 'Editor',
+      heading: 'Editor', 
       subheading: 'Editor Example',
       icon: 'pe-7s-drawer icon-gradient bg-happy-itmeo'
     }),

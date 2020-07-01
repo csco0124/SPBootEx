@@ -263,8 +263,14 @@
                 window.addEventListener('resize', this.getWindowWidth);
 
                 //Init
-                this.getWindowWidth()
-            })
+                this.getWindowWidth();
+            });
+console.log('2222');
+            console.log(this.$store.getters.getUserEmail);
+            console.log(this.$store.state.serverName);
+            if(this.$store.state.userEmail != undefined){
+
+            }
         },
 
         beforeDestroy() {
