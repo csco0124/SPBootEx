@@ -13,11 +13,13 @@ import VueCookies from 'vue-cookies'
 import store from './store/store'
 import Default from './Layout/Wrappers/baseLayout.vue';
 import Pages from './Layout/Wrappers/pagesLayout.vue';
+import Toasted from 'vue-toasted';
 
 Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);
 Vue.use(VueCookies);
+Vue.use(Toasted);
 /*
 예제
 $cookies.set('vue_test', 'vue_test_value', '30s');  //30초동안 쿠키 저장

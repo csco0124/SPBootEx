@@ -4,7 +4,7 @@
             <Header />
         </transition>
         <transition name="fade" mode="out-in" appear>
-            <Sidebar />
+            <Sidebar v-on:make-toast="makeToast"/>
         </transition>
         <div class="app-main__outer">
             <div class="app-main__inner">
@@ -52,6 +52,13 @@
             'font-awesome-icon': FontAwesomeIcon,
         },
         methods: {
+          makeToast: function(variant) {
+            this.$toasted.show(variant, {
+               theme: "outline",
+               position: "top-right",
+               duration : 2000
+            });
+     	   }
         },
     }
 </script>

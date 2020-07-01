@@ -24,11 +24,11 @@ const store = new Vuex.Store({
     setServerEnv: function (state, payload) {
       state.serverName = payload.data;
     },
-    setUserSessionData: function (state, payload) {
-      state.userName = payload.data.user_name;
-      state.userEmail = payload.data.user_email;
-      state.userImgUrl = payload.data.user_img_url;
-      state.userLocale = payload.data.user_locale;
+    setUserSessionData: function (state, data) {
+      state.userName = data.user_name;
+      state.userEmail = data.user_email;
+      state.userImgUrl = data.user_img_url;
+      state.userLocale = data.user_locale;
     },
     userSessionInvalidate: function (state, payload) {
       window.location.href="/";
@@ -41,9 +41,19 @@ const store = new Vuex.Store({
       });
     },
     getUserSessionData: function (context) {
-     axios.get('/getUserSession').then(response => {
+    	//동기식 처리를 위해 사용
+    	$.ajax({ 
+    		data: {}, 
+    		url: '/getUserSession', 
+    		dataType: 'json', 
+    		async: false, 
+    		success: function(response) { 
+    			context.commit('setUserSessionData', response); 
+    		} 
+    	});
+     /*axios.get('/getUserSession').then(response => {
         context.commit('setUserSessionData', response);
-      });
+      });*/
     },
     userSessionInvalidate: function (context) {
      axios.get('/userSessionInvalidate').then(response => {

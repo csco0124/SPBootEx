@@ -22,7 +22,7 @@
                         <div class="widget-heading">{{$store.state.userName}}</div>
                         <div class="widget-subheading">{{$store.state.userEmail}}</div>
                     </div>
-                    <div v-else class="widget-content-right header-user-info ml-3">
+                    <div v-else class="widget-content-left ml-3">
                         <router-link to='/pages/login-boxed'>
                             <b-btn v-b-tooltip.hover title="Login" class="btn-shadow p-1" size="sm" variant="info">
                             <font-awesome-icon icon="sign-in-alt" class="mr-1 ml-1"/>

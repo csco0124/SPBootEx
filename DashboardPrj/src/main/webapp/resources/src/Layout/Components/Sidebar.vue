@@ -265,11 +265,9 @@
                 //Init
                 this.getWindowWidth();
             });
-console.log('2222');
-            console.log(this.$store.getters.getUserEmail);
-            console.log(this.$store.state.serverName);
+            
             if(this.$store.state.userEmail != undefined){
-
+              this.$emit('make-toast', 'Hello '+this.$store.getters.getUserEmail+'!');
             }
         },
 

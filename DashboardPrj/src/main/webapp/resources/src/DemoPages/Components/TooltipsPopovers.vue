@@ -47,6 +47,17 @@
         </b-row>
       </div>
     </div>
+
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <h5 class="card-title">Toast</h5>
+
+        <div class="text-center">
+          <b-btn id="toast1" v-on:click="showToast()" variant="primary">
+            Show Toast
+          </b-btn>
+        </div>
+    </div>
   </div>
 </template>
 
@@ -69,5 +80,14 @@
         'rightbottom', 'left', 'leftbottom'
       ]
     }),
+    methods:{
+      showToast(){
+        this.$toasted.show("Toasted !!", {
+        	 theme: "outline",
+        	 position: "top-right",
+        	 duration : 5000
+        });
+      }
+    }
   }
 </script>
