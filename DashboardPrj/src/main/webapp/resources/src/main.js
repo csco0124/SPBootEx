@@ -15,11 +15,15 @@ import Default from './Layout/Wrappers/baseLayout.vue';
 import Pages from './Layout/Wrappers/pagesLayout.vue';
 import Toasted from 'vue-toasted';
 
+import VueGoodTablePlugin from 'vue-good-table';
+import 'vue-good-table/dist/vue-good-table.css'
+
 Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);
 Vue.use(VueCookies);
 Vue.use(Toasted);
+Vue.use(VueGoodTablePlugin);
 /*
 예제
 $cookies.set('vue_test', 'vue_test_value', '30s');  //30초동안 쿠키 저장

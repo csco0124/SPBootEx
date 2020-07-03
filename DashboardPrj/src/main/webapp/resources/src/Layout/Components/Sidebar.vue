@@ -60,6 +60,10 @@
                                 href: '/examples/treeview',
                                 title: 'Treeview',
                             },
+                            {
+                                href: '/examples/grid',
+                                title: 'Grid',
+                            },
                         ]
                     },
                     {
@@ -265,7 +269,7 @@
                 //Init
                 this.getWindowWidth();
             });
-            
+
             if(this.$store.state.userEmail != undefined){
               this.$emit('make-toast', 'Hello '+this.$store.getters.getUserEmail+'!');
             }
