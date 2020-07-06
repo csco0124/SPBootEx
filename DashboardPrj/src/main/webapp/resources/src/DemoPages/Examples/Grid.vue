@@ -2,11 +2,20 @@
   <div>
     <page-title :heading=heading :subheading=subheading :icon=icon></page-title>
     <b-card title="Grid Example (Guide Link : https://xaksis.github.io/vue-good-table/)" class="main-card mb-4">
-      <vue-good-table :columns="columns" :rows="rows"/>
+      <vue-good-table v-bind:columns="columns" v-bind:rows="rows" v-bind:select-options="{enabled: true}"
+                      v-on:on-row-click="toggleSelectRow">
+        <template slot="table-row" slot-scope="props">
+          <span v-if="props.row.active">
+            <input type="text" v-model="props.row[props.column.field]" style="width : 98%;">
+          </span>
+          <span v-else>
+            {{props.formattedRow[props.column.field]}}
+          </span>
+        </template>
+      </vue-gooe-table>
     </b-card>
   </div>
 </template>
-
 <script>
   import PageTitle from "../../Layout/Components/PageTitle.vue";
 
@@ -54,7 +63,23 @@
 
     },
     methods: {
+      toggleSelectRow(params) {
+        console.log(params.row + ":" + params.pageIndex + ":" + params.selected + ":" + params.row.id + ":" + this.rows[params.pageIndex].id);
+        this.selectRow(params.row, params.selected);
+        this.changeUpdate(params.row, params.pageIndex, params.selected);
+        /*for (let i = 0; i < this.rows.length; i++) {
+        	if (params.row.id === this.rows[i].id) {
+            this.changeUpdate(this, i, params.selected);
 
+          }
+        }*/
+      },
+      selectRow(rowObj, targetSelected) { //체크박스 선택
+      	this.$set(rowObj, 'vgtSelected', targetSelected);
+  		},
+      changeUpdate(rowObj, row, isActive){ //텍스트박스 활성화/비활성화
+        this.$set(rowObj, 'active', isActive);
+      }
     }
   }
 </script>
