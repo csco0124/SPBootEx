@@ -1,6 +1,15 @@
 package com.app.dashboard.google;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -32,8 +41,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
+import com.app.dashboard.google.calendar.CalendarDto;
+import com.app.dashboard.google.calendar.CalendarDto.Attendees;
 import com.app.dashboard.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * @author 김동건 (dgkim@bsgglobal.com)
@@ -103,12 +118,8 @@ public class GoogleController {
 	        ResponseEntity<Map> responseEntity = restTemplate.exchange(tokenUrl, HttpMethod.POST, requestEntity, Map.class);
 	        Map<String, Object> responseMap = responseEntity.getBody();
 	 
-	        // id_token 라는 키에 사용자가 정보가 존재한다.
-	        // 받아온 결과는 JWT (Json Web Token) 형식으로 받아온다. 콤마 단위로 끊어서 첫 번째는 현 토큰에 대한 메타 정보, 두 번째는 우리가 필요한 내용이 존재한다.
-	        // 세번째 부분에는 위변조를 방지하기 위한 특정 알고리즘으로 암호화되어 사이닝에 사용한다.
-	        //Base 64로 인코딩 되어 있으므로 디코딩한다.
-	 
 	        String[] tokens = ((String)responseMap.get("id_token")).split("\\.");
+	        String access_token = (String)responseMap.get("access_token");
 	        //JSON String 형식을 을 자바 Map 형식으로 변환
 	        ObjectMapper mapper = new ObjectMapper();
 	        Map<String, String> result = mapper.readValue(new String(Base64.decodeBase64(tokens[1]), "utf-8"), Map.class);
@@ -118,10 +129,11 @@ public class GoogleController {
 	        userMap.put("user_img_url", result.get("picture"));
 	        userMap.put("user_email", result.get("email"));
 	        userMap.put("user_locale", result.get("locale"));
+	        userMap.put("access_token", access_token);
 	        userService.insertAndUpdateUser(userMap);
 	        
 	        HttpSession httpSession = request.getSession(true);
-	        httpSession.setMaxInactiveInterval(Integer.parseInt(properties.getProperty("common.sessionTimeout")));	//30초
+	        httpSession.setMaxInactiveInterval(Integer.parseInt(properties.getProperty("common.sessionTimeout")));
 	        httpSession.setAttribute("DASHBOARD_USER_SESSION", userMap);
 	        
 	        success = "Y";
@@ -138,12 +150,107 @@ public class GoogleController {
 	}
 	
 	@RequestMapping(value = "/googleResult")
-	public String googleResult(@RequestParam("success")String success,
-			@RequestParam("failMsg")String failMsg,
-			Model model) {
+	public String googleResult(@RequestParam("success")String success, @RequestParam("failMsg")String failMsg, Model model) {
 		model.addAttribute("success", success);
 		model.addAttribute("failMsg", failMsg);
 		
 		return "googleLogin";
+	}
+	
+	/**
+	 * 구글 캘린더 리스트
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/getCalendarMeetList")
+	public @ResponseBody List<CalendarDto> getCalendarMeetList(HttpServletRequest request){
+		HttpSession httpSession = request.getSession(true);
+		Map<String, Object> userMap = (Map<String, Object>)httpSession.getAttribute("DASHBOARD_USER_SESSION");
+		String access_token = ""+userMap.get("access_token");
+		String login_email = ""+userMap.get("user_email");
+		
+		List<CalendarDto> list = new ArrayList<CalendarDto>();
+		//오늘날짜로만 세팅
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date time = new Date();
+        String sysdate = format.format(time);
+        String timeMin = sysdate+"T00:00:00Z";
+        String timeMax = sysdate+"T23:59:59Z";
+        try {
+        	// 회의실 리스트
+        	URL url = new URL("https://www.googleapis.com/calendar/v3/users/me/calendarList?timeMin="+timeMin+"&timeMax="+timeMax+"&timeZone=Asia/Seoul");
+        	JsonObject jsonObject = this.getApiCall(url, access_token);
+        	JsonArray jsonArray = jsonObject.getAsJsonArray("items");
+        	for (JsonElement element : jsonArray) {
+        		String calendarId = element.getAsJsonObject().get("id").getAsString();
+        		// 회의실별 예약된 회의 리스트
+        		if(calendarId.equals(login_email)) {
+	        		url = new URL("https://www.googleapis.com/calendar/v3/calendars/"+calendarId+"/events?timeMin="+timeMin+"&timeMax="+timeMax+"&timeZone=Asia/Seoul");
+	        		JsonObject jsonMeetObject = this.getApiCall(url, access_token);	// 리스트별 회의일정 가져오기
+	        		JsonArray jsonMeetArray = jsonMeetObject.getAsJsonArray("items");
+	        		for (JsonElement meetElement : jsonMeetArray) {
+	        			CalendarDto calendarDto = new CalendarDto();
+	        			calendarDto.setSummary(meetElement.getAsJsonObject().get("summary").getAsString());
+	        			calendarDto.setLocation(meetElement.getAsJsonObject().get("location").getAsString());
+	        			calendarDto.setStart_datetime(meetElement.getAsJsonObject().get("start").getAsJsonObject().get("dateTime").getAsString());
+	        			calendarDto.setEnd_datetime(meetElement.getAsJsonObject().get("end").getAsJsonObject().get("dateTime").getAsString());
+	        			
+	        			List<CalendarDto.Attendees> AttendeesList = new ArrayList<CalendarDto.Attendees>();
+	        			JsonArray jsonAttendeesArray = meetElement.getAsJsonObject().get("attendees").getAsJsonArray();
+	        			for (JsonElement attendeesElement : jsonAttendeesArray) {
+	        				CalendarDto.Attendees attendees = new CalendarDto().new Attendees();
+	        				if(null == attendeesElement.getAsJsonObject().get("resource")) {
+	        					attendees.setDisplayName(attendeesElement.getAsJsonObject().get("displayName").getAsString());
+		        				attendees.setEmail(attendeesElement.getAsJsonObject().get("email").getAsString());
+		            			AttendeesList.add(attendees);
+	        				}
+	        			}
+	        			calendarDto.setAttendeesList(AttendeesList);
+	        			list.add(calendarDto);
+	        		}
+        		}
+        	}
+        	
+        	
+        }catch(Exception e) {
+        	e.printStackTrace();
+        }
+        
+		return list;
+	}
+	
+	/**
+	 * 구글 API Call
+	 * @param url : API URL
+	 * @param access_token : 사용자 AccessToken
+	 * @return
+	 */
+	private JsonObject getApiCall(URL url, String access_token) throws Exception {
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestProperty("Authorization", "Bearer " + access_token);        
+        conn.setRequestProperty("Content-Type","application/json");
+        conn.setRequestMethod("GET");
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        String output;
+
+        StringBuffer response = new StringBuffer();
+        while ((output = in.readLine()) != null) {
+            response.append(output);
+        }
+        in.close();
+        
+        JsonObject jsonObject = new JsonParser().parse(response.toString()).getAsJsonObject();
+        return jsonObject;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		/*
+		String aaa = "2020-07-17T15:15:00+09:00";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+		LocalDateTime end_datetime = LocalDateTime.parse(aaa, formatter);
+		System.out.println(end_datetime);
+		System.out.println(end_datetime.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+		*/
 	}
 }

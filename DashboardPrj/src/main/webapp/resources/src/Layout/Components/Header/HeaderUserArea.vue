@@ -29,10 +29,20 @@
                             </b-btn>
                         </router-link>
                     </div>
-                    <div class="widget-content-right header-user-info ml-3">
-                        <b-btn v-b-tooltip.hover title="Tooltip Example" class="btn-shadow p-1" size="sm" variant="info">
-                            <font-awesome-icon icon="calendar-alt" class="mr-1 ml-1"/>
-                        </b-btn>
+                    <div v-if="$store.state.userEmail != undefined" class="widget-content-right header-user-info ml-3">
+                        <b-dropdown toggle-class="p-0 mr-2" menu-class="dropdown-menu-lg" variant="link" right no-caret>
+                            <span slot="button-content">
+                              <b-btn v-b-tooltip.hover title="Tooltip Example" class="btn-shadow p-1" size="sm" variant="info">
+                                  <font-awesome-icon icon="calendar-alt" class="mr-1 ml-1"/>
+                              </b-btn>
+                            </span>
+                            <template v-for="(item) in meetDataList" v-bind:key="item.summary">
+                              {{item.summary}}[
+                              <template v-for="(attendees, index) in item.attendeesList" v-bind:key="attendees.email">
+                                {{attendees.displayName}}&nbsp;
+                              </template>]<br>
+                            </template>
+                        </b-dropdown>
                     </div>
                 </div>
             </div>
@@ -41,6 +51,7 @@
 </template>
 
 <script>
+    import axios from 'axios'
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 
     import {library} from '@fortawesome/fontawesome-svg-core'
@@ -79,12 +90,23 @@
             'font-awesome-icon': FontAwesomeIcon,
         },
         data: () => ({
-
+            meetDataList : []
         }),
         methods: {
             userSessionInvalidate(){
-                this.$store.dispatch('userSessionInvalidate');
+              this.$store.dispatch('userSessionInvalidate');
+            },
+            getGoogleCalendarMeetList(){
+              axios.post('/getCalendarMeetList').then(response => {
+                this.meetDataList = response.data;
+                console.log(this.meetDataList);
+              });
             }
+        },
+        mounted() {
+          if(this.$store.state.userEmail != undefined){
+              this.getGoogleCalendarMeetList();
+          }
         }
     }
 
