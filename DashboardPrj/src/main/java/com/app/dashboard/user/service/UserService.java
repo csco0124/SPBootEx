@@ -17,4 +17,8 @@ public class UserService {
 	public void insertAndUpdateUser(Map<String, Object> user) throws Exception{
 		userDao.insertAndUpdateUser(user);
 	}
+	public Map<String, Object> getUserInfo(Map<String, Object> user) throws Exception{
+		return userDao.getUserInfo(user);
+	}
+	
 }

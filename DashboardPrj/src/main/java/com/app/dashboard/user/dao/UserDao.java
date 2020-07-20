@@ -6,4 +6,6 @@ import org.springframework.dao.DataAccessException;
 
 public interface UserDao {
 	public void insertAndUpdateUser(Map<String, Object> user) throws DataAccessException;
+	public Map<String, Object> getUserInfo(Map<String, Object> user) throws DataAccessException;
+	
 }

@@ -90,7 +90,7 @@ public class GoogleController {
 		OAuth2Operations oauthOperations = googleConnectionFactory.getOAuthOperations();
 		String googleUrl = oauthOperations.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, googleOAuth2Parameters);
 
-		model.addAttribute("googleUrl", googleUrl);
+		model.addAttribute("googleUrl", googleUrl+"&access_type=offline");
 
 		return "googleLogin";
 	}
@@ -120,6 +120,10 @@ public class GoogleController {
 	 
 	        String[] tokens = ((String)responseMap.get("id_token")).split("\\.");
 	        String access_token = (String)responseMap.get("access_token");
+	        String refresh_token = "";
+	        if(null != responseMap.get("refresh_token")) {
+	        	refresh_token = (String)responseMap.get("refresh_token");
+	        }
 	        //JSON String 형식을 을 자바 Map 형식으로 변환
 	        ObjectMapper mapper = new ObjectMapper();
 	        Map<String, String> result = mapper.readValue(new String(Base64.decodeBase64(tokens[1]), "utf-8"), Map.class);
@@ -130,6 +134,8 @@ public class GoogleController {
 	        userMap.put("user_email", result.get("email"));
 	        userMap.put("user_locale", result.get("locale"));
 	        userMap.put("access_token", access_token);
+	        userMap.put("refresh_token", refresh_token);
+	        
 	        userService.insertAndUpdateUser(userMap);
 	        
 	        HttpSession httpSession = request.getSession(true);
@@ -149,6 +155,39 @@ public class GoogleController {
 		return "redirect:http://localhost/googleResult"+param.toString();
 	}
 	
+	/**
+	 * Refresh Token으로 Access Token 갱신
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/getGoogleRefreshToken")
+	public @ResponseBody String getGoogleRefreshToken(HttpServletRequest request){
+		String successYn = "N";
+		try {
+			HttpSession httpSession = request.getSession(true);
+			Map<String, Object> userMap = (Map<String, Object>)httpSession.getAttribute("DASHBOARD_USER_SESSION");
+			Map<String, Object> userInfo = userService.getUserInfo(userMap);
+			
+			RestTemplate restTemplate = new RestTemplate();
+	        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+	        parameters.add("client_id", clientId);
+	        parameters.add("client_secret", clientSecret);
+	        parameters.add("refresh_token", ""+userInfo.get("google_refresh_token"));
+	        parameters.add("grant_type", "refresh_token");
+	        
+			HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+	        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<MultiValueMap<String, String>>(parameters, headers);
+	        ResponseEntity<Map> responseEntity = restTemplate.exchange(tokenUrl, HttpMethod.POST, requestEntity, Map.class);
+	        Map<String, Object> responseMap = responseEntity.getBody();
+	        userMap.put("access_token", responseMap.get("access_token"));
+	        successYn = "Y";
+		} catch(Exception e) {
+			
+		}
+		return successYn;
+	}
+	
 	@RequestMapping(value = "/googleResult")
 	public String googleResult(@RequestParam("success")String success, @RequestParam("failMsg")String failMsg, Model model) {
 		model.addAttribute("success", success);
@@ -162,8 +201,8 @@ public class GoogleController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/getCalendarMeetList")
-	public @ResponseBody List<CalendarDto> getCalendarMeetList(HttpServletRequest request){
+	@RequestMapping(value = "/getGoogleCalendarMeetList")
+	public @ResponseBody List<CalendarDto> getGoogleCalendarMeetList(HttpServletRequest request){
 		HttpSession httpSession = request.getSession(true);
 		Map<String, Object> userMap = (Map<String, Object>)httpSession.getAttribute("DASHBOARD_USER_SESSION");
 		String access_token = ""+userMap.get("access_token");

@@ -3,13 +3,29 @@
 <mapper namespace="com.app.dashboard.user.dao.UserDao">
 	
 	<update id="insertAndUpdateUser" parameterType="map">
-		INSERT INTO DASHBOARD_USER(USER_EMAIL, USER_NAME, USER_IMG_URL, USER_LOCALE)
-			VALUES (#{user_email, jdbcType=VARCHAR}, #{user_name, jdbcType=VARCHAR}, #{user_img_url, jdbcType=VARCHAR}, #{user_locale, jdbcType=VARCHAR})
+		INSERT INTO DASHBOARD_USER(USER_EMAIL, USER_NAME, USER_IMG_URL, USER_LOCALE, GOOGLE_REFRESH_TOKEN)
+			VALUES (#{user_email, jdbcType=VARCHAR}, 
+					#{user_name, jdbcType=VARCHAR}, 
+					#{user_img_url, jdbcType=VARCHAR}, 
+					#{user_locale, jdbcType=VARCHAR},
+					#{refresh_token, jdbcType=VARCHAR})
 		ON DUPLICATE KEY
 			UPDATE 	 USER_NAME = #{user_name, jdbcType=VARCHAR}
 		      		,USER_IMG_URL = #{user_img_url, jdbcType=VARCHAR}
 		      		,USER_LOCALE = #{user_locale, jdbcType=VARCHAR}
+		      		,GOOGLE_REFRESH_TOKEN = #{refresh_token, jdbcType=VARCHAR}
 		      		,UDT_DT = NOW()
 	</update>
 	
+	<select id="getUserInfo" parameterType="map" resultType="com.app.dashboard.util.LowerKeyMap">
+		SELECT 	USER_EMAIL,
+				USER_NAME,
+				USER_IMG_URL,
+				REG_DT,
+				UDT_DT,
+				USER_LOCALE,
+				GOOGLE_REFRESH_TOKEN 
+			FROM DASHBOARD_USER
+		WHERE USER_EMAIL = #{user_email, jdbcType=VARCHAR}
+	</select>
 </mapper>

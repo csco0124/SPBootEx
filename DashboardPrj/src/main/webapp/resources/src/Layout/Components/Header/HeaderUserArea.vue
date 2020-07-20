@@ -13,7 +13,7 @@
                             <button type="button" tabindex="0" class="dropdown-item">Menus</button>
                             <button type="button" tabindex="0" class="dropdown-item">Settings</button>
                             <h6 tabindex="-1" class="dropdown-header">Header</h6>
-                            <button type="button" tabindex="0" class="dropdown-item">Actions</button>
+                            <button type="button" v-on:click="googleRefreshToken()" tabindex="0" class="dropdown-item">googleRefreshToken</button>
                             <div tabindex="-1" class="dropdown-divider"></div>
                             <button type="button" v-on:click="userSessionInvalidate()" tabindex="0" class="dropdown-item">Logout</button>
                         </b-dropdown>
@@ -110,7 +110,13 @@
               this.$store.dispatch('userSessionInvalidate');
             },
             getGoogleCalendarMeetList(){
-              axios.post('/getCalendarMeetList').then(response => {
+              axios.post('/getGoogleCalendarMeetList').then(response => {
+                this.meetDataList = response.data;
+                console.log(this.meetDataList);
+              });
+            },
+            googleRefreshToken(){
+              axios.post('/getGoogleRefreshToken').then(response => {
                 this.meetDataList = response.data;
                 console.log(this.meetDataList);
               });
