@@ -36,7 +36,7 @@
                                   <font-awesome-icon icon="calendar-alt" class="mr-1 ml-1"/>
                               </b-btn>
                             </span>
-                            <template v-if="attendeesList.length">
+                            <template v-if="meetDataList.length">
                               <b-dropdown-header id="dropdown-header-label" style="padding-left:15px;">
                                 Today meeting list
                               </b-dropdown-header>
