@@ -32,16 +32,29 @@
                     <div v-if="$store.state.userEmail != undefined" class="widget-content-right header-user-info ml-3">
                         <b-dropdown toggle-class="p-0 mr-2" menu-class="dropdown-menu-lg" variant="link" right no-caret>
                             <span slot="button-content">
-                              <b-btn v-b-tooltip.hover title="Tooltip Example" class="btn-shadow p-1" size="sm" variant="info">
+                              <b-btn v-b-tooltip.hover title="Today Meeting List" class="btn-shadow p-1" size="sm" variant="info">
                                   <font-awesome-icon icon="calendar-alt" class="mr-1 ml-1"/>
                               </b-btn>
                             </span>
-                            <template v-for="(item) in meetDataList" v-bind:key="item.summary">
-                              {{item.summary}}[
-                              <template v-for="(attendees, index) in item.attendeesList" v-bind:key="attendees.email">
-                                {{attendees.displayName}}&nbsp;
-                              </template>]<br>
-                            </template>
+                            <b-dropdown-header id="dropdown-header-label" style="padding-left:15px;">
+                              Today Meeting List
+                            </b-dropdown-header>
+                            <div style="width:400px; margin:0px 15px 0px 15px;" v-for="(item) in meetDataList" v-bind:key="item.summary">
+                              <span class="font-weight-bold"><i class="pe-7s-headphones icon-gradient bg-premium-dark" style="padding-right: 6px;"/>[{{item.summary}}]</span><br>
+                              <span class="font-weight-bold"><i class="pe-7s-map-2 icon-gradient bg-premium-dark" style="padding-right: 8px;"/>{{item.location}}</span><br>
+                              <span class="font-weight-normal"><i class="pe-7s-timer icon-gradient bg-premium-dark" style="padding-right: 5px;"/>{{item.start_datetime_str}}&nbsp;~&nbsp;{{item.end_datetime_str}}</span><br>
+                              <div>
+                                <div class="float-left">
+                                  <i class="pe-7s-users icon-gradient bg-premium-dark" style="padding-right: 5px;"/>
+                                </div>
+                                <div style="margin-left:17px;">
+                                  <template v-for="(attendees, index) in item.attendeesList" v-bind:key="attendees.email">
+                                    <span class="font-weight-light">{{attendees.displayName}}</span>(<span class="font-italic">{{attendees.email}}</span>)<br>
+                                  </template>
+                                </div>
+                              </div>
+                              <b-dropdown-divider></b-dropdown-divider>
+                            </div>
                         </b-dropdown>
                     </div>
                 </div>

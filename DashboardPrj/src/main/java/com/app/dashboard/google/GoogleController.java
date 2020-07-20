@@ -200,8 +200,15 @@ public class GoogleController {
 	        			for (JsonElement attendeesElement : jsonAttendeesArray) {
 	        				CalendarDto.Attendees attendees = new CalendarDto().new Attendees();
 	        				if(null == attendeesElement.getAsJsonObject().get("resource")) {
-	        					attendees.setDisplayName(attendeesElement.getAsJsonObject().get("displayName").getAsString());
-		        				attendees.setEmail(attendeesElement.getAsJsonObject().get("email").getAsString());
+	        					String displayName = "";
+	        					String email = attendeesElement.getAsJsonObject().get("email").getAsString();
+	        					if(null == attendeesElement.getAsJsonObject().get("displayName")) {
+	        						displayName = email.substring(0, email.indexOf("@")-1);
+	        					} else {
+	        						displayName = attendeesElement.getAsJsonObject().get("displayName").getAsString();
+	        					}
+	        					attendees.setDisplayName(displayName);
+		        				attendees.setEmail(email);
 		            			AttendeesList.add(attendees);
 	        				}
 	        			}
