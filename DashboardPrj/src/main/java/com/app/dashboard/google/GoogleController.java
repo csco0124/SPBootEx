@@ -91,7 +91,10 @@ public class GoogleController {
 		String googleUrl = oauthOperations.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, googleOAuth2Parameters);
 
 		model.addAttribute("googleUrl", googleUrl+"&access_type=offline");
-
+		/*
+		 * 구글 Oauth2.0의 경우 Refresh_token은 최초 권한 요청때 1회만 갱신토큰을 반환하도록 되어 있으므로, Refresh_token을 계속 받고 싶은 경우 아래 파라미터 추가
+		 * approval_prompt=force
+		 */
 		return "googleLogin";
 	}
 	
