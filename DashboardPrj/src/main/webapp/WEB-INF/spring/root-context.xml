@@ -7,7 +7,7 @@
 	
 	<util:properties id="jdbc" 		location="/WEB-INF/config/jdbc_${spring.profiles.active:local}.properties"/>
 	<util:properties id="prop" 		location="classpath:properties/common_${spring.profiles.active:local}.properties" />
-	<util:properties id="api" 		location="classpath:properties/api.properties" />
+	<util:properties id="api" 		location="classpath:properties/api_${spring.profiles.active:local}.properties" />
 	
 	<bean id="properties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<property name="locations">
