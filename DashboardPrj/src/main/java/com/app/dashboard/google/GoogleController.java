@@ -82,6 +82,8 @@ public class GoogleController {
 	private String clientSecret;
 	@Value("#{api['api.google.token.url']}")
 	private String tokenUrl;
+	@Value("#{api['api.google.result_redirect_url']}")
+	private String resultRedirectUrl;
 	
 	@RequestMapping(value = "/googleLogin")
 	public String googleLogin(Model model) {
@@ -155,7 +157,7 @@ public class GoogleController {
 		StringBuffer param = new StringBuffer();
 		param.append("?success=" + success);
         param.append("&failMsg=" + failMsg);
-		return "redirect:http://localhost/googleResult"+param.toString();
+		return "redirect:"+resultRedirectUrl+param.toString();
 	}
 	
 	/**
