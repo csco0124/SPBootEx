@@ -166,7 +166,7 @@ public class GoogleController {
 	 * @return
 	 */
 	@RequestMapping(value = "/getGoogleRefreshToken")
-	public @ResponseBody String getGoogleRefreshToken(HttpServletRequest request){
+	public @ResponseBody String getGoogleRefreshToken(HttpServletRequest request) throws Exception {
 		String successYn = "N";
 		try {
 			HttpSession httpSession = request.getSession(true);
@@ -188,7 +188,7 @@ public class GoogleController {
 	        userMap.put("access_token", responseMap.get("access_token"));
 	        successYn = "Y";
 		} catch(Exception e) {
-			
+			e.printStackTrace();
 		}
 		return successYn;
 	}
@@ -223,14 +223,14 @@ public class GoogleController {
         try {
         	// 회의실 리스트
         	URL url = new URL("https://www.googleapis.com/calendar/v3/users/me/calendarList?timeMin="+timeMin+"&timeMax="+timeMax+"&timeZone=Asia/Seoul");
-        	JsonObject jsonObject = this.getApiCall(url, access_token);
+        	JsonObject jsonObject = this.getApiCall(url, access_token, request);
         	JsonArray jsonArray = jsonObject.getAsJsonArray("items");
         	for (JsonElement element : jsonArray) {
         		String calendarId = element.getAsJsonObject().get("id").getAsString();
         		// 회의실별 예약된 회의 리스트
         		if(calendarId.equals(login_email)) {
 	        		url = new URL("https://www.googleapis.com/calendar/v3/calendars/"+calendarId+"/events?timeMin="+timeMin+"&timeMax="+timeMax+"&timeZone=Asia/Seoul");
-	        		JsonObject jsonMeetObject = this.getApiCall(url, access_token);	// 리스트별 회의일정 가져오기
+	        		JsonObject jsonMeetObject = this.getApiCall(url, access_token, request);	// 리스트별 회의일정 가져오기
 	        		JsonArray jsonMeetArray = jsonMeetObject.getAsJsonArray("items");
 	        		for (JsonElement meetElement : jsonMeetArray) {
 	        			CalendarDto calendarDto = new CalendarDto();
@@ -276,13 +276,25 @@ public class GoogleController {
 	 * @param access_token : 사용자 AccessToken
 	 * @return
 	 */
-	private JsonObject getApiCall(URL url, String access_token) throws Exception {
+	private JsonObject getApiCall(URL url, String access_token, HttpServletRequest request) throws Exception {
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", "Bearer " + access_token);        
         conn.setRequestProperty("Content-Type","application/json");
         conn.setRequestMethod("GET");
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        BufferedReader in = null;
+        try {
+        	in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        } catch(Exception e) {
+        	if(-1 < e.getMessage().indexOf("401")) {	//토큰 갱신 필요
+        		this.getGoogleRefreshToken(request);	//토큰 갱신
+        		HttpSession httpSession = request.getSession(true);
+        		Map<String, Object> userMap = (Map<String, Object>)httpSession.getAttribute("DASHBOARD_USER_SESSION");
+        		conn.setRequestProperty("Authorization", "Bearer " + userMap.get("access_token"));	//채호출 위한 갱신된 토큰으로 변경
+        		in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        	} else {
+        		throw e;
+        	}
+        }
         String output;
 
         StringBuffer response = new StringBuffer();

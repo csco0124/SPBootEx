@@ -3,17 +3,31 @@
 <mapper namespace="com.app.dashboard.user.dao.UserDao">
 	
 	<update id="insertAndUpdateUser" parameterType="map">
-		INSERT INTO DASHBOARD_USER(USER_EMAIL, USER_NAME, USER_IMG_URL, USER_LOCALE, GOOGLE_REFRESH_TOKEN)
-			VALUES (#{user_email, jdbcType=VARCHAR}, 
+		INSERT INTO DASHBOARD_USER(
+				USER_EMAIL, 
+				USER_NAME, 
+				USER_IMG_URL,
+				<if test="refresh_token != null and refresh_token != ''">
+					GOOGLE_REFRESH_TOKEN,
+				</if> 
+				USER_LOCALE 
+			)
+			VALUES (
+					#{user_email, jdbcType=VARCHAR}, 
 					#{user_name, jdbcType=VARCHAR}, 
 					#{user_img_url, jdbcType=VARCHAR}, 
-					#{user_locale, jdbcType=VARCHAR},
-					#{refresh_token, jdbcType=VARCHAR})
+					<if test="refresh_token != null and refresh_token != ''">
+						#{refresh_token, jdbcType=VARCHAR},
+					</if>
+					#{user_locale, jdbcType=VARCHAR}
+					)
 		ON DUPLICATE KEY
 			UPDATE 	 USER_NAME = #{user_name, jdbcType=VARCHAR}
 		      		,USER_IMG_URL = #{user_img_url, jdbcType=VARCHAR}
 		      		,USER_LOCALE = #{user_locale, jdbcType=VARCHAR}
-		      		,GOOGLE_REFRESH_TOKEN = #{refresh_token, jdbcType=VARCHAR}
+		      		<if test="refresh_token != null and refresh_token != ''">
+		      			,GOOGLE_REFRESH_TOKEN = #{refresh_token, jdbcType=VARCHAR}
+		      		</if>
 		      		,UDT_DT = NOW()
 	</update>
 	
