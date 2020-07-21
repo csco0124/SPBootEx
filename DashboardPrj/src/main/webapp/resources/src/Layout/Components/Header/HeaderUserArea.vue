@@ -13,6 +13,7 @@
                             <button type="button" tabindex="0" class="dropdown-item">Menus</button>
                             <button type="button" tabindex="0" class="dropdown-item">Settings</button>
                             <h6 tabindex="-1" class="dropdown-header">Header</h6>
+                            <button type="button" v-on:click="getGoogleCalendarData()" tabindex="0" class="dropdown-item">getGoogleCalendarData</button>
                             <button type="button" v-on:click="googleRefreshToken()" tabindex="0" class="dropdown-item">googleRefreshToken</button>
                             <div tabindex="-1" class="dropdown-divider"></div>
                             <button type="button" v-on:click="userSessionInvalidate()" tabindex="0" class="dropdown-item">Logout</button>
@@ -29,17 +30,17 @@
                             </b-btn>
                         </router-link>
                     </div>
-                    <div v-if="$store.state.userEmail != undefined" class="widget-content-right header-user-info ml-3">
+                    <div v-if="$store.state.userEmail != undefined" class="widget-content-right meeting-info ml-3">
                         <b-dropdown toggle-class="p-0 mr-2" menu-class="dropdown-menu-lg" variant="link" right no-caret>
                             <span slot="button-content">
                               <b-btn v-b-tooltip.hover title="Today Meeting List" class="btn-shadow p-1" size="sm" variant="info">
                                   <font-awesome-icon icon="calendar-alt" class="mr-1 ml-1"/>
                               </b-btn>
                             </span>
+                            <b-dropdown-header id="dropdown-header-label" style="padding-left:15px;">
+                              Today meeting list
+                            </b-dropdown-header>
                             <template v-if="meetDataList.length">
-                              <b-dropdown-header id="dropdown-header-label" style="padding-left:15px;">
-                                Today meeting list
-                              </b-dropdown-header>
                               <div style="width:400px; margin:0px 15px 0px 15px;" v-for="(item) in meetDataList" v-bind:key="item.summary">
                                 <span class="font-weight-bold"><i class="pe-7s-headphones icon-gradient bg-premium-dark" style="padding-right: 6px;"/>[{{item.summary}}]</span><br>
                                 <span class="font-weight-bold"><i class="pe-7s-map-2 icon-gradient bg-premium-dark" style="padding-right: 8px;"/>{{item.location}}</span><br>
@@ -54,14 +55,17 @@
                                     </template>
                                   </div>
                                 </div>
-                                <b-dropdown-divider></b-dropdown-divider>
                               </div>
                             </template>
                             <template v-else>
                               <b-dropdown-header id="dropdown-header-label" style="padding-left:15px;">
-                                No meeting today.
+                                <span class="font-weight-light">No meeting today...</span>
                               </b-dropdown-header>
                             </template>
+                            <b-dropdown-divider></b-dropdown-divider>
+                            <b-dropdown-item-button v-on:click="goGoogleCalendar()" style="padding-left:15px;">
+                              GO Google Calendar <img src="/img/google_calendar_logo.png" style="width: 25px;">
+                            </b-dropdown-item-button>
                         </b-dropdown>
                     </div>
                 </div>
@@ -119,17 +123,41 @@
             getGoogleCalendarMeetList(){
               axios.post('/getGoogleCalendarMeetList').then(response => {
                 this.meetDataList = response.data;
-                console.log(this.meetDataList);
+              });
+            },
+            getGoogleCalendarData(){
+              axios.post('/getGoogleCalendarMeetList').then(response => {
+                console.log(response.data);
               });
             },
             googleRefreshToken(){
               axios.post('/getGoogleRefreshToken').then(response => {
                 if(response.data == "Y"){
-                  alert('성공. 모달로 변경');
+                  alert('성공. 모달로 변경 필요');
                 }else{
-                  alert('실패. 모달로 변경');
+                  alert('실패. 모달로 변경 필요');
                 }
               });
+            },
+            goGoogleCalendar(){ //구글 캘린더 새창 이동(모바일의 경우 어플로 이동)
+              let varUA = navigator.userAgent.toLowerCase(); //userAgent 값 얻기
+            	let link = "https://calendar.google.com/";
+            	if (varUA.indexOf('android') > -1) {
+                link = "intent://calendar.google.com#Intent;package=com.google.android.calendar;scheme=https;end";
+                window.open(link, '_blank');
+            	} else if (varUA.indexOf("iphone") > -1||varUA.indexOf("ipad") > -1||varUA.indexOf("ipod") > -1 ) {
+            		link = "googlecalendar://media";
+            		//window.open(link, '_blank');
+            		//window.open("vnd.google.calendar://media", '_blank');
+            		//window.open("com.google.calendar://media", '_blank');
+            		//window.open("comgooglecalendar://media", '_blank');
+            		setTimeout( function() {
+            			window.open("https://apps.apple.com/kr/app/google-calendar/id909319292", '_blank');
+            		}, 1000);
+            		location.href = link;
+            	} else {
+            		window.open(link, '_blank');
+            	}
             }
         },
         mounted() {
