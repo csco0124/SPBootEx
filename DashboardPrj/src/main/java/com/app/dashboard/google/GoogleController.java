@@ -289,7 +289,12 @@ public class GoogleController {
         		this.getGoogleRefreshToken(request);	//토큰 갱신
         		HttpSession httpSession = request.getSession(true);
         		Map<String, Object> userMap = (Map<String, Object>)httpSession.getAttribute("DASHBOARD_USER_SESSION");
-        		conn.setRequestProperty("Authorization", "Bearer " + userMap.get("access_token"));	//채호출 위한 갱신된 토큰으로 변경
+        		
+        		conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Authorization", "Bearer " + userMap.get("access_token"));        
+                conn.setRequestProperty("Content-Type","application/json");
+                conn.setRequestMethod("GET");
+                in = null;
         		in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
         	} else {
         		throw e;
