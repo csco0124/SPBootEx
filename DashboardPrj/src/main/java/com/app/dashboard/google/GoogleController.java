@@ -235,7 +235,11 @@ public class GoogleController {
 	        		for (JsonElement meetElement : jsonMeetArray) {
 	        			CalendarDto calendarDto = new CalendarDto();
 	        			calendarDto.setSummary(meetElement.getAsJsonObject().get("summary").getAsString());
-	        			calendarDto.setLocation(meetElement.getAsJsonObject().get("location").getAsString());
+	        			String location = "";
+	        			if(null != meetElement.getAsJsonObject().get("location")) {
+	        				location = meetElement.getAsJsonObject().get("location").getAsString();
+	        			}
+	        			calendarDto.setLocation(location);
 	        			calendarDto.setStart_datetime(meetElement.getAsJsonObject().get("start").getAsJsonObject().get("dateTime").getAsString());
 	        			calendarDto.setEnd_datetime(meetElement.getAsJsonObject().get("end").getAsJsonObject().get("dateTime").getAsString());
 	        			
