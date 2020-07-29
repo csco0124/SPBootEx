@@ -1,6 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
 var jquery = require('jquery')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
   entry: './src/main.js',
@@ -15,7 +16,8 @@ module.exports = {
       jquery: 'jquery',
       jQuery: 'jquery',
       'window.jQuery': 'jquery'
-    })
+    }),
+    new BundleAnalyzerPlugin()
   ],
   module: {
     rules: [
@@ -60,7 +62,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+      moment: 'monent/src/monent'
     },
     extensions: ['*', '.js', '.vue', '.json']
   },
